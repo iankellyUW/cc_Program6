@@ -1,0 +1,866 @@
+/*
+ * $Author: Ian Kelly $
+ * $Date: 2021-12-04  $
+ * $Course: COSC 4785 $
+ * $File: program6.lpp$
+*/
+
+%{
+
+#include<iostream>
+#include<iomanip>
+#include<string>
+#include "nodes.hpp"
+#include "program6.hpp"
+#include "program6.tab.hpp"
+
+
+using std::string;
+using std::cerr;
+using std::cout;
+using std::endl;
+
+/*
+ * the noyywrap is how the scanner handles end of file, now it will just
+ * quit. 
+ * get the line numbers from the scanner because of yyyylineno
+ */
+void yyerror(const char *string)
+{
+  cerr << string << endl;
+  return;
+}
+%}
+%option outfile="program6_lex.cpp"
+%option noyywrap
+%option yylineno
+
+/*
+* DO NOT define 945  different regular expressions. You do NOT need most of
+* them. Notice that I put them in as simple rules. Eventually you will need
+* to separate ALL those fancy expressions into single simple rules anyway so
+* why not start now. 
+*/
+
+%x ERROR
+%x COMMENT
+
+%%
+  /*
+   * Numbers. 
+   */
+[0-9]+          {
+                  yylval.ttype=new Node;
+                  yylval.ttype->setval(atoi(yytext));
+                  first_column = next_column;
+                  next_column = next_column + yyleng;
+                  TOKEN = "NUM";
+                  value = yytext;
+                  return NUM;
+                }
+  /*
+  [-][0-9]+      {
+                 first_column = next_column;
+                 next_column = next_column + yyleng;
+                 TOKEN = "NUM";
+                 value = yytext;
+                 return NEG;
+                }
+                */
+  /*
+   * Whitespace: tab, space, newline.
+   */
+\t              { 
+                   first_column = next_column;
+                   next_column = first_column + 9 - (first_column % 8);
+                }
+
+\n              {
+                  next_column = 1;
+                  first_column = next_column;
+                }
+" "             { 
+                  first_column = next_column;
+                  next_column++;
+                }
+
+"=="            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "EQ";
+                    value=" ";
+                    return EQ;
+                }
+
+">"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "GT";
+                    value = " ";
+                    return GT;
+                }
+
+"<"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;    
+                    TOKEN = "LT";
+                    value = " ";
+                    return LT;
+                }
+
+">="           {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "GE";
+                    value = " ";
+                    return GE;
+                }
+
+"<="            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "LE";
+                    value = " ";
+                    return LE;
+                }
+
+"!="            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "NE";
+                    value = " ";
+                    return NE;
+                }
+
+"||"            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "OR";
+                    value = " ";
+                    return OR;
+                }
+
+"&&"            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "AND";
+                    value = " ";
+                    return AND;
+                }
+"+"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "PLUS";
+                    value = " ";
+                    return PLUS;
+                }
+                
+"-"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "MINUS";
+                    value = " ";
+                    return MINUS;
+                }
+"*"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "TIMES";
+                    value = " ";
+                    return TIMES;
+                }
+"/"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "DIV";
+                    value = " ";
+                    return DIV;
+                }
+"{"            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "LBRACE";
+                    value = " ";
+                    return LBRACE;
+                }
+"}"            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "RBRACE";
+                    value = " ";
+                    return RBRACE;
+                }
+"["             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "LBRACK";
+                    value = " ";
+                    return LBRACK;
+                }
+"]"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "RBRACK";
+                    value = " ";
+                    return RBRACK;
+                }
+"("            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "LPAREN";
+                    value = " ";
+                    return LPAREN;
+                }
+")"            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "RPAREN";
+                    value = " ";
+                    return RPAREN;
+                }
+
+"\."            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "DOT";
+                    value = " ";
+                    return DOT;
+                }
+","             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "COMMA";
+                    value = " ";
+                    return COMMA;
+                }
+";"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "SEMI";
+                    value = " ";
+                    return SEMI;
+                }
+"="             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "EQUAL";
+                    value = " ";
+                    return EQUAL;
+                }
+"!"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "NOT";
+                    value = " ";
+                    return NOT;
+                }
+"%"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "MOD";
+                    value = " ";
+                    return MOD;
+                }
+"^"             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "EXP";
+                    value = " ";
+                    return EXP;
+                }
+
+int             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "INT";
+                    value = " ";
+                    return INT;
+                }
+
+void            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "VOID";
+                    value = " ";
+                    return VOID;
+                }
+
+class            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "CLASS";
+                    value = " ";
+                    return CLASS;
+                }
+
+new             {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "NEW";
+                    value = " ";
+                    return NEW;
+                }
+
+print            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "PRINT";
+                    value = " ";
+                    return PRINT;
+                }
+
+read            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "READ";
+                    value = " ";
+                    return READ;
+                }
+
+return            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "RETURN";
+                    value = " ";
+                    return RETURN;
+                }
+if              {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "IF";
+                    value = " ";
+                    return IF;
+                }
+else            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "ELSE";
+                    value = " ";
+                    return ELSE;
+                }
+while           {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "WHILE";
+                    value = " ";
+                    return WHILE;
+                }
+this            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "THIS";
+                    value = " ";
+                    return THIS;
+                }
+null            {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "NULLT";
+                    value = " ";
+                    return NULLT;
+                }
+[_a-zA-Z][_a-zA-Z0-9]* {
+                    first_column = next_column;
+                    next_column = first_column + yyleng;
+                    TOKEN = "IDENT";
+                    idPrev = id;
+                    id = yytext;
+                    return ID;
+                }
+\/\/(.*)        {
+
+                }
+
+"/*"             {
+                    BEGIN(COMMENT);
+                    first_column = next_column;
+                    next_column += yyleng;
+                }
+
+<COMMENT>"\n"   { 
+                    
+                    first_column = next_column;
+                    next_column = 1;
+                }
+<COMMENT>"\t"   {   
+                    
+                    first_column = next_column;
+                    next_column = first_column + 9 - (first_column % 8);
+                 }
+<COMMENT>"*/"   {   
+                    BEGIN(INITIAL);
+                    first_column = next_column;
+                    next_column += yyleng; 
+                }
+<COMMENT>.      {
+                    yymore();
+                    first_column = next_column;
+                    next_column++;
+                }
+
+
+  /*
+   * Matches anything not matched. MUST BE LAST RULE.
+   */
+.               {
+                  BEGIN(ERROR);
+                  yyless(0);
+                }
+
+<ERROR>" "      {
+                BEGIN(0);
+                TOKEN = "ER_CH";
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + 2;
+		        if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+                cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+               
+                }
+<ERROR>"\t"     {
+                BEGIN(0);
+                TOKEN = "ER_CH";
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + 9 - (first_column % 8);
+		        if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+                cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+
+<ERROR>"\n"     {
+                BEGIN(0);
+                TOKEN = "ER_CH";
+                value = yytext;
+                first_column = next_column;
+                next_column = 1;
+		        if (yyleng > 2)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+
+<ERROR>"=="     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+                
+<ERROR>">"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+
+<ERROR>"<"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+
+<ERROR>">="     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"<="     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"!="     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"||"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"&&"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"+"      {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"-"      {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"*"      {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"/"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"{"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"}"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"["     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"]"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"("     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>")"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"\."     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>","      {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>";"     {
+                BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+               cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"!"      { BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+                    cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl; 
+                }
+<ERROR>"%"      { BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+                    cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl;
+                }
+<ERROR>"^"      { BEGIN(0);
+                yyless(1);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+                if (yyleng > 1)
+                {
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+                    cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl;
+                }
+<ERROR>[_a-zA-Z][_a-zA-Z0-9]*  {
+                BEGIN(0);
+                value = yytext;
+                first_column = next_column;
+                next_column = first_column + yyleng;
+		        if (yyleng > 1)
+                {
+                    
+                    TOKEN = "ER_WD";
+                }
+                else
+                {
+                    TOKEN = "ER_CH";
+                }
+                cout << TOKEN << " lexical error. Col:" << first_column << ", Line: " << yylineno << ". Value: " << value << endl;
+                }
+
+<ERROR>.        { 
+                  yymore();
+                }
+
+%%

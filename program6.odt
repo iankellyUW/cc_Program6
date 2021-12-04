@@ -1,0 +1,12 @@
+/*
+ * $Author: Ian Kelly $
+ * $Date: 2021-10-26  $
+ * $Course: COSC 4785 $
+ * $File: program4.odt$
+*/
+
+classbody: LBRACE vardecs error RBRACE
+This error is thrown when there is an error in methdecs.
+
+newexpresion: NEW error
+This error is thrown when there is a bad newexpression.
