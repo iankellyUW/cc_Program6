@@ -8,9 +8,12 @@
 // Just the "node" class
 
 #include <stdio.h>
+#include "typetable.hpp"
 #include "nodes.hpp"
 
 using std::cout;
+
+extern TypeTable types;
 
 Node::Node(Node *lf, Node *rt) : ival(0), dval(0.0), left(lf), right(rt), next(0)
 {
@@ -135,6 +138,25 @@ void Node::print(ostream *out)
   return;
 }
 
+int Node::typeCheck(SymbolTable* table)
+{
+  int outl = 0;
+  int outr = 0;
+  if (left)
+    outl = left->typeCheck();
+  if (right)
+    outr = right->typeCheck();
+  if (next)
+  {
+    next->typeCheck();
+  }
+  if (outl == outr)
+  {
+    return outl;
+  }
+  return 0;
+}
+
 nodeId::nodeId(string ID) : Node()
 {
   tab += "    ";
@@ -226,7 +248,7 @@ void nodeNewExp::print(ostream *out)
   return;
 }
 
-nodeExpNameNumNull::nodeExpNameNumNull(Node *lf, Node *rt, int type,string val) : Node(lf, rt)
+nodeExpNameNumNull::nodeExpNameNumNull(Node *lf, Node *rt, int type, string val) : Node(lf, rt)
 {
   tab += "      ";
   myType = type;
@@ -533,7 +555,7 @@ void nodeBlock::print(ostream *out)
   return;
 }
 
-nodeParam::nodeParam(Node *lf, Node *rt, int type) : Node(lf,rt)
+nodeParam::nodeParam(Node *lf, Node *rt, int type) : Node(lf, rt)
 {
   tab += "      ";
   myType = type;
@@ -629,7 +651,7 @@ void nodeType::print(ostream *out)
   return;
 }
 
-nodeVard::nodeVard(Node *lf,Node *rt, int type) : Node(lf,rt)
+nodeVard::nodeVard(Node *lf, Node *rt, int type) : Node(lf, rt)
 {
   tab += "      ";
   myType = type;
@@ -867,7 +889,7 @@ void nodeClassBody::print(ostream *out)
   return;
 }
 
-nodeClassDec::nodeClassDec(Node *lf,Node *rt) : Node(lf,rt)
+nodeClassDec::nodeClassDec(Node *lf, Node *rt) : Node(lf, rt)
 {
   tab += "  ";
 }
@@ -888,7 +910,7 @@ void nodeClassDec::print(ostream *out)
   return;
 }
 
-nodeMultBracks::nodeMultBracks(Node *lf,Node *rt) : Node(lf,rt)
+nodeMultBracks::nodeMultBracks(Node *lf, Node *rt) : Node(lf, rt)
 {
   tab += "  ";
 }
@@ -928,10 +950,31 @@ void nodeMultBrack::print(ostream *out)
 }
 
 // nodeBin for expressions
-nodeBin::nodeBin(Node *lf, Node *rt, int type) : Node(lf, rt)
+nodeBin::nodeBin(Node *lf, Node *rt, int type, SymbolTable *table) : Node(lf, rt)
 {
   tab += "  ";
   myType = type;
+  tempTable = table;
+}
+
+int nodeBin::typeCheck(SymbolTable *table)
+{
+  int outl = 0;
+  int outr = 0;
+  if (left)
+    outl = left->typeCheck();
+  if (right)
+    outr = right->typeCheck();
+  if (next)
+  {
+    next->typeCheck();
+  }
+
+  if (outl == outr)
+  {
+    return outl;
+  }
+  return 0;
 }
 
 void nodeBin::print(ostream *out)
@@ -1102,7 +1145,6 @@ void nodeInt::print(ostream *out)
   *out << "int";
   return;
 }
-
 
 // nodes for NEW
 newNode::newNode(Node *lf, Node *rt) : Node(lf, rt) {}

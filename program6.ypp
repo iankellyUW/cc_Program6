@@ -221,7 +221,7 @@ consbody: parameterlist RPAREN block {
 methbody: parameterlist RPAREN block {
                         string name = "main";
                         if(curTable->name.compare(name) == 0){ // if getting a main message
-                              if(hasMain == false) // check one doesn't a
+                              if(hasMain == false) // check one doesn't already exist
                               {
                                     if (!curTable->paramtypes.empty())
                                     {     
@@ -239,10 +239,9 @@ methbody: parameterlist RPAREN block {
                                     cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Main already exists" << endl;
                                     curTable = curTable->getParent();
                               }
-                        } else {
+                        }
                               $$=new Node($1,$3);
                               curTable = curTable->getParent();
-                        }
                         
                         }
 ;
@@ -342,7 +341,6 @@ block: LBRACE RBRACE    {
 
 statements: statement {$$=new nodeStats(nullptr,$1,0);}
       | statements statement {$$=new nodeStats($1,$2,1);}
-      | statements error {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad statements" << endl; yyerrok;}
 ;
 
 statement: SEMI         {
@@ -350,7 +348,6 @@ statement: SEMI         {
                         }
          | name EQUAL expression SEMI {
                         $$=new nodeState($1,$3,1);
-                        cout << "state: " << $1->getstring() << endl;
                         }
          | name LPAREN arglist RPAREN SEMI {
                         $$=new nodeState($1,$3,3);
@@ -402,7 +399,7 @@ blockstacked: blockstart RBRACE  {
                         $$=new Node($1,$2);
                         curTable = curTable->getParent();
                         }
-         | blockstart error RBRACE {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << "Bad vardecs or statements in block." << endl; yyerrok;}       
+         | blockstart error RBRACE {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad vardecs or statements in block." << endl; yyerrok;}       
 ;
 
 //name
@@ -417,6 +414,10 @@ name: THIS              {
                         }
         | name LBRACK expression RBRACK {
                         $$=new nodeName($1,$3,4);
+                        }
+        | name DOT THIS {
+                        $$=new nodeName($1);
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " 'this' can only be first." << endl;
                         }
 ;
 
@@ -440,6 +441,7 @@ conditionalstatement: IF LPAREN expression RPAREN statement {
 
 expression: name        {
                         $$=new nodeExpNameNumNull($1);
+                        $$->setval($1->getstring());
                         }
        | number         {        
                         $$=new nodeExpNameNumNull($1,nullptr,1,$1->getstring()); 
@@ -452,8 +454,14 @@ expression: name        {
                         }
        |  expression PLUS expression   { 
                         //cout << "e + e : ";
-                        //cout << $1->getint() << " + " << $3->getint() << endl; 
-                        $$=new nodeBin($1,$3,0);
+                        //cout << $1->getint() << " + " << $3->getint() << endl;
+                        string tempInt = "int";
+                        TypeEntry *temp = types.findType(tempInt);
+                        $$=new nodeBin($1,$3,0,curTable);
+                        if($1->typeCheck() != 0 && temp != nullptr)
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp + exp" << endl;
+                        }
                         }
        |  expression MINUS expression  { 
                         //cout << "e - e : ";

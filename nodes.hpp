@@ -10,11 +10,14 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "typetable.hpp"
 
-using std::vector;
 using std::endl;
 using std::ostream;
 using std::string;
+using std::vector;
+
+extern TypeTable types;
 
 class Node
 {
@@ -41,6 +44,7 @@ public:
     void setvec(vector<string> param);
     void addvec(string param);
     virtual void print(ostream *out = 0);
+    virtual int typeCheck(SymbolTable* table = nullptr);
 
 protected:
     int myline;
@@ -58,9 +62,10 @@ protected:
     Node *left, *right;
     Node *next;
     vector<string> myVec;
+    SymbolTable* tempTable;
 };
 
-class nodeId: public Node
+class nodeId : public Node
 {
 public:
     nodeId(string id = "");
@@ -68,7 +73,7 @@ public:
     virtual void print(ostream *out = 0);
 };
 
-class nodeNum: public Node
+class nodeNum : public Node
 {
 public:
     nodeNum(string id = "");
@@ -76,35 +81,34 @@ public:
     virtual void print(ostream *out = 0);
 };
 
-class nodeNewExp: public Node
+class nodeNewExp : public Node
 {
 public:
-    nodeNewExp(Node *lf = 0,Node *rt = 0, int type = 0, string id = "");
+    nodeNewExp(Node *lf = 0, Node *rt = 0, int type = 0, string id = "");
 
     virtual void print(ostream *out = 0);
 };
 
-class nodeExpNameNumNull: public Node
+class nodeExpNameNumNull : public Node
 {
 public:
-    nodeExpNameNumNull(Node *lf = 0,Node *rt = 0, int type = 0,string val = "");
+    nodeExpNameNumNull(Node *lf = 0, Node *rt = 0, int type = 0, string val = "");
 
     virtual void print(ostream *out = 0);
 };
 
-
-class nodeExpArgl: public Node
+class nodeExpArgl : public Node
 {
 public:
-    nodeExpArgl(Node *lf = 0,Node *rt = 0, int type = 0, string id = "");
+    nodeExpArgl(Node *lf = 0, Node *rt = 0, int type = 0, string id = "");
 
     virtual void print(ostream *out = 0);
 };
 
-class nodeConSt: public Node
+class nodeConSt : public Node
 {
 public:
-    nodeConSt(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeConSt(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -112,7 +116,7 @@ public:
 class nodeArgl : public Node
 {
 public:
-    nodeArgl(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeArgl(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -120,7 +124,7 @@ public:
 class nodeName : public Node
 {
 public:
-    nodeName(Node *lf = 0,Node *rt = 0, int type = 0, string ID1 = "", string ID2 = "");
+    nodeName(Node *lf = 0, Node *rt = 0, int type = 0, string ID1 = "", string ID2 = "");
 
     virtual void print(ostream *out = 0);
 };
@@ -128,7 +132,7 @@ public:
 class nodeState : public Node
 {
 public:
-    nodeState(Node *lf = 0,Node *rt = 0, int type = 0, string ID = "");
+    nodeState(Node *lf = 0, Node *rt = 0, int type = 0, string ID = "");
 
     virtual void print(ostream *out = 0);
 };
@@ -136,7 +140,7 @@ public:
 class nodeStats : public Node
 {
 public:
-    nodeStats(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeStats(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -144,7 +148,7 @@ public:
 class nodeBlock : public Node
 {
 public:
-    nodeBlock(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeBlock(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -152,7 +156,7 @@ public:
 class nodeParam : public Node
 {
 public:
-    nodeParam(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeParam(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -168,7 +172,7 @@ public:
 class nodeType : public Node
 {
 public:
-    nodeType(Node *lf = 0,Node *rt= 0, int type = 0);
+    nodeType(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -176,7 +180,7 @@ public:
 class nodeVard : public Node
 {
 public:
-    nodeVard(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeVard(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -184,7 +188,7 @@ public:
 class nodeConst : public Node
 {
 public:
-    nodeConst(Node *lf = 0,Node *rt = 0, string ID = "");
+    nodeConst(Node *lf = 0, Node *rt = 0, string ID = "");
 
     virtual void print(ostream *out = 0);
 };
@@ -192,7 +196,7 @@ public:
 class nodeMeth : public Node
 {
 public:
-    nodeMeth(Node *lf = 0,Node *rt = 0, string ID = "", string ID2 = "", int type = 0);
+    nodeMeth(Node *lf = 0, Node *rt = 0, string ID = "", string ID2 = "", int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -200,7 +204,7 @@ public:
 class nodeVards : public Node
 {
 public:
-    nodeVards(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeVards(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -208,15 +212,15 @@ public:
 class nodeConsts : public Node
 {
 public:
-    nodeConsts(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeConsts(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
 
-class nodeMeths: public Node
+class nodeMeths : public Node
 {
 public:
-    nodeMeths(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeMeths(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -232,7 +236,7 @@ public:
 class nodeClassBody : public Node
 {
 public:
-    nodeClassBody(Node *lf = 0,Node *rt = 0, int type = 0);
+    nodeClassBody(Node *lf = 0, Node *rt = 0, int type = 0);
 
     virtual void print(ostream *out = 0);
 };
@@ -240,9 +244,10 @@ public:
 class nodeBin : public Node
 {
 public:
-    nodeBin(Node *lf = 0,Node *rt = 0,int type = 0);
+    nodeBin(Node *lf = 0, Node *rt = 0, int type = 0, SymbolTable *table = nullptr);
 
     virtual void print(ostream *out = 0);
+    virtual int typeCheck(SymbolTable* table = nullptr);
 };
 
 class nodeMinus : public Node
@@ -261,7 +266,6 @@ public:
     virtual void print(ostream *out = 0);
 };
 
-
 class nodeNot : public Node
 {
 public:
@@ -278,53 +282,52 @@ public:
     virtual void print(ostream *out = 0);
 };
 
-
 class nodeRead : public Node
 {
-    public:
-        nodeRead();
+public:
+    nodeRead();
 
-        virtual void print(ostream *out = 0);
+    virtual void print(ostream *out = 0);
 };
 
 class newNode : public Node
 {
-    public:
-        newNode(Node *lf = 0, Node *rt = 0);
+public:
+    newNode(Node *lf = 0, Node *rt = 0);
 
-        virtual void print(ostream *out = 0);
+    virtual void print(ostream *out = 0);
 };
 
 class nodeBrackExp : public Node
 {
-    public:
-        nodeBrackExp(Node *lf = 0, Node *rt = 0);
+public:
+    nodeBrackExp(Node *lf = 0, Node *rt = 0);
 
-        virtual void print(ostream *out = 0);
+    virtual void print(ostream *out = 0);
 };
 
 class nodeMultBrack : public Node
 {
-    public:
-        nodeMultBrack();
+public:
+    nodeMultBrack();
 
-        virtual void print(ostream *out = 0);
+    virtual void print(ostream *out = 0);
 };
 
 class nodeMultBracks : public Node
 {
-    public:
-        nodeMultBracks(Node *lf = 0, Node *rt = 0);
+public:
+    nodeMultBracks(Node *lf = 0, Node *rt = 0);
 
-        virtual void print(ostream *out = 0);
+    virtual void print(ostream *out = 0);
 };
 
 class nodeInt : public Node
 {
-    public:
-        nodeInt();
+public:
+    nodeInt();
 
-        virtual void print(ostream *out = 0);
+    virtual void print(ostream *out = 0);
 };
 
 class nodeParExp : public Node

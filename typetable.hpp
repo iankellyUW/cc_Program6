@@ -21,8 +21,6 @@ public:
     int addType(string entry, TypeEntry* type);
     TypeEntry* findType(string type);
     void dump(int spacing);
-
-private:
     map<string, TypeEntry*> ttTable;
 };
 

@@ -13,6 +13,13 @@ class foo {
      int a;
      this.a = 5;
   }
+
+  foo(ext spicy, supr mild)
+  {
+     int z;
+     this.a = 5;
+  }
+
   int boo(int a)
   {
     b=a;
