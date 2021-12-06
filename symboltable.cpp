@@ -66,9 +66,11 @@ void TypeEntry::print(int spacing)
     }
 };
 
-SymbolTable::SymbolTable(SymbolTable *parentPtr)
+SymbolTable::SymbolTable(SymbolTable *parentPtr, string nm, string tp)
 {
     parent = parentPtr;
+    name = nm;
+    type = tp;
 };
 
 TypeEntry *SymbolTable::lookup(string ident)

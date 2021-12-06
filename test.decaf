@@ -1,0 +1,39 @@
+/* vim: filetype=java
+ * This is a bigger input file for the 4th program that will be their compiler.
+ * It tests quite a bit.
+ */
+
+class foo {
+
+  int a;
+  int b;
+
+  foo(test param, extra boots)
+  {
+     int a;
+     this.a = 5;
+     this.x.y.z = 1;
+  }
+
+  void main(int z)
+  {
+    int x;
+  }
+
+  int main()
+  {
+    int q;
+  }
+
+  void main(int p)
+  {
+    int j;
+  }
+
+
+  int boo(int a)
+  {
+    b=a;
+    return 1;
+  }
+}

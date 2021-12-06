@@ -68,6 +68,8 @@
 //#include <cmath> // for pow() in the original version of this
 #include <string>
 #include <iostream>
+#include <cstring>
+#include <string>
 #include <FlexLexer.h>// yes have to include this here AND in the 'driver'
 #include <vector>
 #include "nodes.hpp"
@@ -111,6 +113,7 @@ extern TypeTable types;
 extern SymbolTable* table;
 extern SymbolTable* curTable;
 int blockcntr = 0;
+bool hasMain = false;
 /*
  * There are lots of examples that have multiple types in the union here.
  * DO NOT DO THAT. Keep it simple, one type. This is the type that you use
@@ -118,7 +121,7 @@ int blockcntr = 0;
  */
 
 
-#line 122 "program6.tab.cpp" /* yacc.c:339  */
+#line 125 "program6.tab.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -202,11 +205,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 64 "program6.ypp" /* yacc.c:355  */
+#line 67 "program6.ypp" /* yacc.c:355  */
 
   Node *ttype;
 
-#line 210 "program6.tab.cpp" /* yacc.c:355  */
+#line 213 "program6.tab.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -223,7 +226,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 227 "program6.tab.cpp" /* yacc.c:358  */
+#line 230 "program6.tab.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -524,17 +527,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   104,   104,   108,   115,   122,   132,   135,   138,   141,
-     144,   148,   151,   154,   157,   162,   163,   166,   167,   170,
-     171,   174,   179,   184,   193,   204,   213,   218,   224,   231,
-     238,   248,   254,   260,   267,   268,   271,   276,   282,   290,
-     293,   296,   299,   302,   305,   306,   307,   310,   313,   316,
-     319,   322,   325,   328,   331,   334,   340,   350,   354,   358,
-     362,   366,   370,   373,   376,   379,   385,   386,   389,   394,
-     397,   402,   405,   408,   411,   414,   419,   424,   429,   434,
-     439,   443,   449,   455,   460,   465,   470,   475,   480,   487,
-     491,   496,   501,   506,   509,   512,   518,   521,   524,   527,
-     531,   534,   539,   543,   547,   553,   557
+       0,   107,   107,   111,   118,   125,   135,   138,   141,   144,
+     147,   151,   154,   157,   160,   165,   166,   169,   170,   173,
+     174,   177,   182,   187,   196,   207,   216,   221,   250,   261,
+     272,   286,   292,   298,   305,   306,   309,   314,   320,   328,
+     331,   334,   337,   340,   343,   344,   345,   348,   351,   355,
+     358,   361,   364,   367,   370,   373,   379,   389,   393,   397,
+     401,   405,   409,   412,   415,   419,   425,   426,   429,   434,
+     437,   442,   445,   448,   451,   454,   459,   464,   469,   474,
+     479,   483,   489,   495,   500,   505,   510,   515,   520,   527,
+     531,   536,   541,   546,   549,   552,   558,   561,   564,   567,
+     571,   574,   579,   583,   587,   593,   597
 };
 #endif
 
@@ -1503,34 +1506,34 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 104 "program6.ypp" /* yacc.c:1646  */
+#line 107 "program6.ypp" /* yacc.c:1646  */
     {
                         tree=(yyvsp[0].ttype);
                         (yyval.ttype)=(yyvsp[0].ttype);
                         }
-#line 1512 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1515 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 109 "program6.ypp" /* yacc.c:1646  */
+#line 112 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyvsp[-1].ttype)->setnext((yyvsp[0].ttype));
                         (yyval.ttype)=(yyvsp[-1].ttype);
                         }
-#line 1521 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1524 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 116 "program6.ypp" /* yacc.c:1646  */
+#line 119 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassDec((yyvsp[-1].ttype),(yyvsp[0].ttype));
                         curTable = curTable->getParent();
                         }
-#line 1530 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1533 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 122 "program6.ypp" /* yacc.c:1646  */
+#line 125 "program6.ypp" /* yacc.c:1646  */
     {
                         SymbolTable* temp = new SymbolTable(curTable);
                         TypeEntry* typeEnt = new TypeEntry("",(yyvsp[0].ttype)->getstring(),"class_type",temp);
@@ -1539,140 +1542,140 @@ yyreduce:
                         types.addType(typeEnt->type,typeEnt);
                         (yyval.ttype)=new Node((yyvsp[0].ttype));
                         }
-#line 1543 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1546 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 132 "program6.ypp" /* yacc.c:1646  */
+#line 135 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody(nullptr,nullptr,0);
                         }
-#line 1551 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1554 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 135 "program6.ypp" /* yacc.c:1646  */
+#line 138 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody((yyvsp[-1].ttype),new Node((yyvsp[-3].ttype),(yyvsp[-2].ttype)),1);
                         }
-#line 1559 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1562 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 138 "program6.ypp" /* yacc.c:1646  */
+#line 141 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody((yyvsp[-1].ttype),(yyvsp[-2].ttype),2);
                         }
-#line 1567 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1570 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 141 "program6.ypp" /* yacc.c:1646  */
+#line 144 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody((yyvsp[-1].ttype),(yyvsp[-2].ttype),3);
                         }
-#line 1575 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1578 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 144 "program6.ypp" /* yacc.c:1646  */
+#line 147 "program6.ypp" /* yacc.c:1646  */
     {
                         cerr << "Line: " << scanner.lineno() << " Col: " << first_column << "<vardecs> <error in methdecs>" << endl;
                         yyerrok;
                         }
-#line 1584 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1587 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 148 "program6.ypp" /* yacc.c:1646  */
+#line 151 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody((yyvsp[-2].ttype),(yyvsp[-1].ttype),4);
                         }
-#line 1592 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1595 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 151 "program6.ypp" /* yacc.c:1646  */
+#line 154 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody((yyvsp[-1].ttype),nullptr,5);
                         }
-#line 1600 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1603 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 154 "program6.ypp" /* yacc.c:1646  */
+#line 157 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody((yyvsp[-1].ttype),nullptr,6);
                         }
-#line 1608 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1611 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 157 "program6.ypp" /* yacc.c:1646  */
+#line 160 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeClassBody((yyvsp[-1].ttype),nullptr,7);
                         }
-#line 1616 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1619 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 162 "program6.ypp" /* yacc.c:1646  */
+#line 165 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeVards((yyvsp[0].ttype),nullptr,0);}
-#line 1622 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1625 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 163 "program6.ypp" /* yacc.c:1646  */
+#line 166 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeVards((yyvsp[-1].ttype),(yyvsp[0].ttype),1);}
-#line 1628 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1631 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 166 "program6.ypp" /* yacc.c:1646  */
+#line 169 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeConsts((yyvsp[-1].ttype),nullptr,0);}
-#line 1634 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1637 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 167 "program6.ypp" /* yacc.c:1646  */
+#line 170 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeConsts((yyvsp[-2].ttype),(yyvsp[-1].ttype),1);}
-#line 1640 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1643 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 170 "program6.ypp" /* yacc.c:1646  */
+#line 173 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeMeths((yyvsp[-1].ttype),(yyvsp[0].ttype));}
-#line 1646 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1649 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 171 "program6.ypp" /* yacc.c:1646  */
+#line 174 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeMeths((yyvsp[-2].ttype),new Node((yyvsp[-1].ttype),(yyvsp[0].ttype)));}
-#line 1652 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1655 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 174 "program6.ypp" /* yacc.c:1646  */
+#line 177 "program6.ypp" /* yacc.c:1646  */
     {
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[-1].ttype)->getstring(), (yyvsp[-2].ttype)->getstring());
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         (yyval.ttype)=new nodeVard((yyvsp[-2].ttype),(yyvsp[-1].ttype),0);
                         }
-#line 1662 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1665 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 179 "program6.ypp" /* yacc.c:1646  */
+#line 182 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeVard((yyvsp[-2].ttype),(yyvsp[-1].ttype),0);
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[-1].ttype)->getstring(),(yyvsp[-2].ttype)->getstring());
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         }
-#line 1672 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1675 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 184 "program6.ypp" /* yacc.c:1646  */
+#line 187 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeVard((yyvsp[-3].ttype),new Node((yyvsp[-2].ttype),(yyvsp[-1].ttype)));
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[-1].ttype)->getstring(),(yyvsp[-3].ttype)->getstring());
@@ -1682,11 +1685,11 @@ yyreduce:
                         }
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         }
-#line 1686 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1689 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 193 "program6.ypp" /* yacc.c:1646  */
+#line 196 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeVard((yyvsp[-3].ttype),new Node((yyvsp[-2].ttype),(yyvsp[-1].ttype)));
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[-1].ttype)->getstring(),(yyvsp[-3].ttype)->getstring());
@@ -1696,11 +1699,11 @@ yyreduce:
                         }
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         }
-#line 1700 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1703 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 204 "program6.ypp" /* yacc.c:1646  */
+#line 207 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new Node((yyvsp[-1].ttype));
                         SymbolTable* temp = new SymbolTable(curTable);
@@ -1708,264 +1711,300 @@ yyreduce:
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         curTable = temp;
                         }
-#line 1712 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1715 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 213 "program6.ypp" /* yacc.c:1646  */
+#line 216 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new Node((yyvsp[-2].ttype),(yyvsp[0].ttype));
                         curTable = curTable->getParent();
                         }
-#line 1721 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1724 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 218 "program6.ypp" /* yacc.c:1646  */
+#line 221 "program6.ypp" /* yacc.c:1646  */
     {
-                        (yyval.ttype)=new Node((yyvsp[-2].ttype),(yyvsp[0].ttype));
-                        curTable = curTable->getParent();
+                        string name = "main";
+                        if(curTable->name.compare(name) == 0){ // if getting a main message
+                              if(hasMain == false) // check one doesn't a
+                              {
+                                    if (!curTable->paramtypes.empty())
+                                    {     
+                                    cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " No parameters allowed for main." << endl;
+                                    }
+                                    else if (curTable->type != "void" || curTable->type != "int")
+                                    {
+                                    cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad name return type for main" << endl;
+                                    } else {
+                                    hasMain = true;
+                                    (yyval.ttype)=new Node((yyvsp[-2].ttype),(yyvsp[0].ttype));
+                                    }
+                                    curTable = curTable->getParent();
+                              } else {
+                                    cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Main already exists" << endl;
+                                    curTable = curTable->getParent();
+                              }
+                        } else {
+                              (yyval.ttype)=new Node((yyvsp[-2].ttype),(yyvsp[0].ttype));
+                              curTable = curTable->getParent();
                         }
-#line 1730 "program6.tab.cpp" /* yacc.c:1646  */
+                        
+                        }
+#line 1756 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 224 "program6.ypp" /* yacc.c:1646  */
+#line 250 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeMeth((yyvsp[-2].ttype), (yyvsp[-1].ttype));
                         SymbolTable* temp = new SymbolTable(curTable);
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[-1].ttype)->getstring(), (yyvsp[-2].ttype)->getstring(), "method_type",temp);
+                        if (curTable->lookup((yyvsp[-1].ttype)->getstring()) != nullptr)
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Type already exists in this scope" << endl;
+                        }
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         curTable = temp;
                         }
-#line 1742 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1772 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 231 "program6.ypp" /* yacc.c:1646  */
+#line 261 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeMeth((yyvsp[-2].ttype), (yyvsp[-1].ttype));
                         SymbolTable* temp = new SymbolTable(curTable);
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[-1].ttype)->getstring(), (yyvsp[-2].ttype)->getstring(), "method_type",temp);
+                        if (curTable->lookup((yyvsp[-1].ttype)->getstring()) != nullptr)
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Type already exists in this scope" << endl;
+                        }
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         curTable = temp;
                         }
-#line 1754 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1788 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 238 "program6.ypp" /* yacc.c:1646  */
+#line 272 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeMeth((yyvsp[-1].ttype));
                         SymbolTable* temp = new SymbolTable(curTable);
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[-1].ttype)->getstring(), "void", "method_type",temp);
+                        if (curTable->lookup((yyvsp[-1].ttype)->getstring()) != nullptr)
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Type already exists in this scope" << endl;
+                        }
                         curTable->insert((yyvsp[-1].ttype)->getstring(),typeEnt);
                         curTable = temp;
                         }
-#line 1766 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1804 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 248 "program6.ypp" /* yacc.c:1646  */
+#line 286 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeType(nullptr, nullptr, 0);
                         (yyval.ttype)->setval("int");
                         }
-#line 1775 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1813 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 254 "program6.ypp" /* yacc.c:1646  */
+#line 292 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeId();
                         (yyval.ttype)->setval(scanner.YYText());
                         }
-#line 1784 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1822 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 260 "program6.ypp" /* yacc.c:1646  */
+#line 298 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeNum();
                         (yyval.ttype)->setval(scanner.YYText());
                         }
-#line 1793 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1831 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 267 "program6.ypp" /* yacc.c:1646  */
+#line 305 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=nullptr;}
-#line 1799 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1837 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 268 "program6.ypp" /* yacc.c:1646  */
+#line 306 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeParams(nullptr,(yyvsp[0].ttype),0);
                         }
-#line 1807 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1845 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 271 "program6.ypp" /* yacc.c:1646  */
+#line 309 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeParams((yyvsp[-2].ttype),(yyvsp[0].ttype),1);
                         }
-#line 1815 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1853 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 276 "program6.ypp" /* yacc.c:1646  */
+#line 314 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeParam((yyvsp[-1].ttype),(yyvsp[0].ttype),0);
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[0].ttype)->getstring(),(yyvsp[-1].ttype)->getstring());
                         curTable->paramtypes.push_back((yyvsp[-1].ttype)->getstring());
                         curTable->insert((yyvsp[0].ttype)->getstring(),typeEnt);
                         }
-#line 1826 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1864 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 282 "program6.ypp" /* yacc.c:1646  */
+#line 320 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeParam((yyvsp[-1].ttype),(yyvsp[0].ttype),1);
                         TypeEntry* typeEnt = new TypeEntry((yyvsp[0].ttype)->getstring(),(yyvsp[-1].ttype)->getstring());
                         curTable->paramtypes.push_back((yyvsp[-1].ttype)->getstring());
                         curTable->insert((yyvsp[0].ttype)->getstring(),typeEnt);
                         }
-#line 1837 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 39:
-#line 290 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeBlock(nullptr,nullptr, 0);
-                        }
-#line 1845 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 40:
-#line 293 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeBlock((yyvsp[-2].ttype),(yyvsp[-1].ttype),1);
-                        }
-#line 1853 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 41:
-#line 296 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeBlock(nullptr,(yyvsp[-1].ttype),2);
-                        }
-#line 1861 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 42:
-#line 299 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeBlock(nullptr,(yyvsp[-1].ttype),3);
-                        }
-#line 1869 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 43:
-#line 302 "program6.ypp" /* yacc.c:1646  */
-    {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << "Bad vardecs or statements in block." << endl; yyerrok;}
 #line 1875 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 39:
+#line 328 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeBlock(nullptr,nullptr, 0);
+                        }
+#line 1883 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 40:
+#line 331 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeBlock((yyvsp[-2].ttype),(yyvsp[-1].ttype),1);
+                        }
+#line 1891 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 41:
+#line 334 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeBlock(nullptr,(yyvsp[-1].ttype),2);
+                        }
+#line 1899 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 337 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeBlock(nullptr,(yyvsp[-1].ttype),3);
+                        }
+#line 1907 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 340 "program6.ypp" /* yacc.c:1646  */
+    {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad vardecs or statements in block." << endl; yyerrok;}
+#line 1913 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 44:
-#line 305 "program6.ypp" /* yacc.c:1646  */
+#line 343 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeStats(nullptr,(yyvsp[0].ttype),0);}
-#line 1881 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1919 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 306 "program6.ypp" /* yacc.c:1646  */
+#line 344 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=new nodeStats((yyvsp[-1].ttype),(yyvsp[0].ttype),1);}
-#line 1887 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 46:
-#line 307 "program6.ypp" /* yacc.c:1646  */
-    {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << "Bad statements" << endl; yyerrok;}
-#line 1893 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 47:
-#line 310 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeState(nullptr,nullptr,0);
-                        }
-#line 1901 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 48:
-#line 313 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeState((yyvsp[-3].ttype),(yyvsp[-1].ttype),1);
-                        }
-#line 1909 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 49:
-#line 316 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeState((yyvsp[-4].ttype),(yyvsp[-2].ttype),3);
-                        }
-#line 1917 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 50:
-#line 319 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeState(nullptr,(yyvsp[-2].ttype),5);
-                        }
 #line 1925 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 46:
+#line 345 "program6.ypp" /* yacc.c:1646  */
+    {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad statements" << endl; yyerrok;}
+#line 1931 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 348 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeState(nullptr,nullptr,0);
+                        }
+#line 1939 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 351 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeState((yyvsp[-3].ttype),(yyvsp[-1].ttype),1);
+                        cout << "state: " << (yyvsp[-3].ttype)->getstring() << endl;
+                        }
+#line 1948 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 49:
+#line 355 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeState((yyvsp[-4].ttype),(yyvsp[-2].ttype),3);
+                        }
+#line 1956 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 358 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeState(nullptr,(yyvsp[-2].ttype),5);
+                        }
+#line 1964 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 51:
-#line 322 "program6.ypp" /* yacc.c:1646  */
+#line 361 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeState(nullptr,(yyvsp[0].ttype),6);
                         }
-#line 1933 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1972 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 325 "program6.ypp" /* yacc.c:1646  */
+#line 364 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeState((yyvsp[-3].ttype),(yyvsp[-1].ttype),7);
                         }
-#line 1941 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1980 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 328 "program6.ypp" /* yacc.c:1646  */
+#line 367 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeState(nullptr,(yyvsp[0].ttype),8);
                         }
-#line 1949 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1988 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 331 "program6.ypp" /* yacc.c:1646  */
+#line 370 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeState(nullptr,nullptr,9);
                         }
-#line 1957 "program6.tab.cpp" /* yacc.c:1646  */
+#line 1996 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 334 "program6.ypp" /* yacc.c:1646  */
+#line 373 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeState(nullptr,(yyvsp[0].ttype),10);
                         }
-#line 1965 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2004 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 340 "program6.ypp" /* yacc.c:1646  */
+#line 379 "program6.ypp" /* yacc.c:1646  */
     {
                         SymbolTable* temp = new SymbolTable(curTable);
                         TypeEntry* typeEnt = new TypeEntry("" + blockcntr,"","",temp);
@@ -1974,449 +2013,450 @@ yyreduce:
                         blockcntr++;
                         curTable = temp;
                         }
-#line 1978 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2017 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 350 "program6.ypp" /* yacc.c:1646  */
+#line 389 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeBlock((yyvsp[-1].ttype),nullptr, 0);
                         curTable = curTable->getParent();
                         }
-#line 1987 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2026 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 354 "program6.ypp" /* yacc.c:1646  */
+#line 393 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new Node((yyvsp[-3].ttype),new nodeBlock((yyvsp[-2].ttype),(yyvsp[-1].ttype),1));
                         curTable = curTable->getParent();
                         }
-#line 1996 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2035 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 358 "program6.ypp" /* yacc.c:1646  */
+#line 397 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new Node((yyvsp[-2].ttype),(yyvsp[-1].ttype));
                         curTable = curTable->getParent();
-                        }
-#line 2005 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 60:
-#line 362 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new Node((yyvsp[-2].ttype),(yyvsp[-1].ttype));
-                        curTable = curTable->getParent();
-                        }
-#line 2014 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 61:
-#line 366 "program6.ypp" /* yacc.c:1646  */
-    {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << "Bad vardecs or statements in block." << endl; yyerrok;}
-#line 2020 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 62:
-#line 370 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeName(nullptr,nullptr,0);
-                        }
-#line 2028 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 63:
-#line 373 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeName((yyvsp[0].ttype),nullptr,1,id,id);
-                        }
-#line 2036 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 64:
-#line 376 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeName((yyvsp[-2].ttype),(yyvsp[0].ttype),2,id,id);
                         }
 #line 2044 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 60:
+#line 401 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new Node((yyvsp[-2].ttype),(yyvsp[-1].ttype));
+                        curTable = curTable->getParent();
+                        }
+#line 2053 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 61:
+#line 405 "program6.ypp" /* yacc.c:1646  */
+    {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << "Bad vardecs or statements in block." << endl; yyerrok;}
+#line 2059 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 62:
+#line 409 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeName(nullptr,nullptr,0);
+                        }
+#line 2067 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 63:
+#line 412 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeName((yyvsp[0].ttype),nullptr,1,id,id);
+                        }
+#line 2075 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 64:
+#line 415 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeName((yyvsp[-2].ttype),(yyvsp[0].ttype),2,id,id);
+                        cout << (yyvsp[-2].ttype)->getstring() << ", " << (yyvsp[0].ttype)->getstring() << endl;
+                        }
+#line 2084 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 65:
-#line 379 "program6.ypp" /* yacc.c:1646  */
+#line 419 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeName((yyvsp[-3].ttype),(yyvsp[-1].ttype),4);
                         }
-#line 2052 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2092 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 385 "program6.ypp" /* yacc.c:1646  */
+#line 425 "program6.ypp" /* yacc.c:1646  */
     {(yyval.ttype)=nullptr;}
-#line 2058 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 67:
-#line 386 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeArgl(nullptr,(yyvsp[0].ttype),0);
-                        }
-#line 2066 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 68:
-#line 389 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeArgl((yyvsp[-2].ttype),(yyvsp[0].ttype),1);
-                        }
-#line 2074 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 69:
-#line 394 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeConSt((yyvsp[-2].ttype),(yyvsp[0].ttype),0);
-                        }
-#line 2082 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 70:
-#line 397 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeConSt((yyvsp[-4].ttype),new Node((yyvsp[-2].ttype),(yyvsp[0].ttype)),1);
-                        }
-#line 2090 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 71:
-#line 402 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeExpNameNumNull((yyvsp[0].ttype));
-                        }
 #line 2098 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 72:
-#line 405 "program6.ypp" /* yacc.c:1646  */
-    {        
-                        (yyval.ttype)=new nodeExpNameNumNull((yyvsp[0].ttype),nullptr,1,(yyvsp[0].ttype)->getstring()); 
+  case 67:
+#line 426 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeArgl(nullptr,(yyvsp[0].ttype),0);
                         }
 #line 2106 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 73:
-#line 408 "program6.ypp" /* yacc.c:1646  */
+  case 68:
+#line 429 "program6.ypp" /* yacc.c:1646  */
     {
-                        (yyval.ttype)=new nodeExpNameNumNull(nullptr,nullptr, 2);
+                        (yyval.ttype)=new nodeArgl((yyvsp[-2].ttype),(yyvsp[0].ttype),1);
                         }
 #line 2114 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 74:
-#line 411 "program6.ypp" /* yacc.c:1646  */
-    { 
-                        (yyval.ttype)=new nodeExpArgl((yyvsp[-3].ttype),(yyvsp[-1].ttype),0);
+  case 69:
+#line 434 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeConSt((yyvsp[-2].ttype),(yyvsp[0].ttype),0);
                         }
 #line 2122 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 70:
+#line 437 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeConSt((yyvsp[-4].ttype),new Node((yyvsp[-2].ttype),(yyvsp[0].ttype)),1);
+                        }
+#line 2130 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 71:
+#line 442 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeExpNameNumNull((yyvsp[0].ttype));
+                        }
+#line 2138 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 72:
+#line 445 "program6.ypp" /* yacc.c:1646  */
+    {        
+                        (yyval.ttype)=new nodeExpNameNumNull((yyvsp[0].ttype),nullptr,1,(yyvsp[0].ttype)->getstring()); 
+                        }
+#line 2146 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 73:
+#line 448 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeExpNameNumNull(nullptr,nullptr, 2);
+                        }
+#line 2154 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 74:
+#line 451 "program6.ypp" /* yacc.c:1646  */
+    { 
+                        (yyval.ttype)=new nodeExpArgl((yyvsp[-3].ttype),(yyvsp[-1].ttype),0);
+                        }
+#line 2162 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 75:
-#line 414 "program6.ypp" /* yacc.c:1646  */
+#line 454 "program6.ypp" /* yacc.c:1646  */
     { 
                         //cout << "e + e : ";
                         //cout << $1->getint() << " + " << $3->getint() << endl; 
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),0);
                         }
-#line 2132 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2172 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 419 "program6.ypp" /* yacc.c:1646  */
+#line 459 "program6.ypp" /* yacc.c:1646  */
     { 
                         //cout << "e - e : ";
                         //cout << $1->getint() << " - " << $3->getint() << endl; 
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),1);
                         }
-#line 2142 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2182 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 424 "program6.ypp" /* yacc.c:1646  */
+#line 464 "program6.ypp" /* yacc.c:1646  */
     { 
                         //cout << "e * e : ";
                         //cout << $1->getint() << " * " << $3->getint() << endl; 
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),2);
                         }
-#line 2152 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2192 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 429 "program6.ypp" /* yacc.c:1646  */
+#line 469 "program6.ypp" /* yacc.c:1646  */
     { 
                         //cout << "e / e : ";
                         //cout << $1->getint() << " / " << $3->getint() << endl; 
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),3);
                         }
-#line 2162 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2202 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 434 "program6.ypp" /* yacc.c:1646  */
+#line 474 "program6.ypp" /* yacc.c:1646  */
     { 
                         //cout << "e ^ e : " ;
                         //cout << $1->getint() << " ^ " << $3->getint() << endl; 
                         (yyval.ttype)=new nodeExpExp((yyvsp[-2].ttype),(yyvsp[0].ttype)); 
                         }
-#line 2172 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2212 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 439 "program6.ypp" /* yacc.c:1646  */
+#line 479 "program6.ypp" /* yacc.c:1646  */
     { 
                         //cout << "- e : " << $2->getint() << endl;       
                         (yyval.ttype)=new nodeMinus((yyvsp[0].ttype));
                         }
-#line 2181 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2221 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 443 "program6.ypp" /* yacc.c:1646  */
+#line 483 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "read()" << endl;
                         (yyval.ttype)=new nodeRead();
                         }
-#line 2190 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2230 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 449 "program6.ypp" /* yacc.c:1646  */
+#line 489 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e || e: ";
                         //cout << $1->getint() << " || " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),4);
                         }
-#line 2200 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2240 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 455 "program6.ypp" /* yacc.c:1646  */
+#line 495 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e == e : ";
                         //cout << $1->getint() << " == " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),5);
                         }
-#line 2210 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2250 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 460 "program6.ypp" /* yacc.c:1646  */
+#line 500 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e != e: ";
                         //cout << $1->getint() << " != " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),6);
                         }
-#line 2220 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2260 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 465 "program6.ypp" /* yacc.c:1646  */
+#line 505 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e >= e: ";
                         //cout << $1->getint() << " >= " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),7);
                         }
-#line 2230 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2270 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 470 "program6.ypp" /* yacc.c:1646  */
+#line 510 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e <= e: ";
                         //cout << $1->getint() << " <= " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),8);
                         }
-#line 2240 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2280 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 475 "program6.ypp" /* yacc.c:1646  */
+#line 515 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e > e: ";
                         //cout << $1->getint() << " > " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),9);
                         }
-#line 2250 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2290 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 480 "program6.ypp" /* yacc.c:1646  */
+#line 520 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e < e: ";
                         //cout << $1->getint() << " < " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),10);
                         }
-#line 2260 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2300 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 487 "program6.ypp" /* yacc.c:1646  */
+#line 527 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "+e : " << $2->getint() << endl;       
                         (yyval.ttype)=new nodePlus((yyvsp[0].ttype));
                         }
-#line 2269 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2309 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 491 "program6.ypp" /* yacc.c:1646  */
+#line 531 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "!e: " << $2->getint() << endl;
                         (yyval.ttype)=new nodeNot((yyvsp[0].ttype));
                         }
-#line 2278 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2318 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 496 "program6.ypp" /* yacc.c:1646  */
+#line 536 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e % e: ";
                         //cout << $1->getint() << " % " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),11);
                         }
-#line 2288 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2328 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 501 "program6.ypp" /* yacc.c:1646  */
+#line 541 "program6.ypp" /* yacc.c:1646  */
     {
                         //cout << "e && e: ";
                         //cout << $1->getint() << " && " << $3->getint() << endl;
                         (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),12);
                         }
-#line 2298 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 93:
-#line 506 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),13);
-                        }
-#line 2306 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 94:
-#line 509 "program6.ypp" /* yacc.c:1646  */
-    { 
-                        (yyval.ttype)=new Node((yyvsp[0].ttype));
-                        }
-#line 2314 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 95:
-#line 512 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodePar((yyvsp[-1].ttype));
-                        }
-#line 2322 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 96:
-#line 518 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeNewExp(nullptr,(yyvsp[-1].ttype),0);
-                        }
-#line 2330 "program6.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 97:
-#line 521 "program6.ypp" /* yacc.c:1646  */
-    {
-                        (yyval.ttype)=new nodeNewExp(nullptr,(yyvsp[0].ttype),1);
-                        }
 #line 2338 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 98:
-#line 524 "program6.ypp" /* yacc.c:1646  */
+  case 93:
+#line 546 "program6.ypp" /* yacc.c:1646  */
     {
-                        (yyval.ttype)=new nodeNewExp((yyvsp[-1].ttype),(yyvsp[0].ttype));
+                        (yyval.ttype)=new nodeBin((yyvsp[-2].ttype),(yyvsp[0].ttype),13);
                         }
 #line 2346 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 94:
+#line 549 "program6.ypp" /* yacc.c:1646  */
+    { 
+                        (yyval.ttype)=new Node((yyvsp[0].ttype));
+                        }
+#line 2354 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 95:
+#line 552 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodePar((yyvsp[-1].ttype));
+                        }
+#line 2362 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 96:
+#line 558 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeNewExp(nullptr,(yyvsp[-1].ttype),0);
+                        }
+#line 2370 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 97:
+#line 561 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeNewExp(nullptr,(yyvsp[0].ttype),1);
+                        }
+#line 2378 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 98:
+#line 564 "program6.ypp" /* yacc.c:1646  */
+    {
+                        (yyval.ttype)=new nodeNewExp((yyvsp[-1].ttype),(yyvsp[0].ttype));
+                        }
+#line 2386 "program6.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 99:
-#line 527 "program6.ypp" /* yacc.c:1646  */
+#line 567 "program6.ypp" /* yacc.c:1646  */
     {
                         cout << "Line: " << scanner.lineno() << " Col: " << first_column << " error after NEW" << endl;
                         yyerrok;
                         }
-#line 2355 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2395 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 531 "program6.ypp" /* yacc.c:1646  */
+#line 571 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeNewExp((yyvsp[0].ttype),nullptr,3,id);
                         }
-#line 2363 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2403 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 534 "program6.ypp" /* yacc.c:1646  */
+#line 574 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeNewExp((yyvsp[-1].ttype),(yyvsp[0].ttype),4,id);
                         }
-#line 2371 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2411 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 539 "program6.ypp" /* yacc.c:1646  */
+#line 579 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeBrackExp((yyvsp[-1].ttype));
                         (yyval.ttype)->setval(1);
                         }
-#line 2380 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2420 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 543 "program6.ypp" /* yacc.c:1646  */
+#line 583 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeBrackExp((yyvsp[-2].ttype),(yyvsp[0].ttype));
                         (yyval.ttype)->setval((yyvsp[0].ttype)->getint() + 1);
                         }
-#line 2389 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2429 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 547 "program6.ypp" /* yacc.c:1646  */
+#line 587 "program6.ypp" /* yacc.c:1646  */
     {
                         (yyval.ttype)=new nodeBrackExp((yyvsp[0].ttype));
                         (yyval.ttype)->setval((yyvsp[0].ttype)->getint());
                         }
-#line 2398 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2438 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 553 "program6.ypp" /* yacc.c:1646  */
+#line 593 "program6.ypp" /* yacc.c:1646  */
     {
             (yyval.ttype)=new nodeMultBracks(nullptr,nullptr);
             (yyval.ttype)->setval(1);
             }
-#line 2407 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2447 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 557 "program6.ypp" /* yacc.c:1646  */
+#line 597 "program6.ypp" /* yacc.c:1646  */
     {
             (yyval.ttype)=new nodeMultBracks((yyvsp[-2].ttype),nullptr);
             (yyval.ttype)->setval((yyvsp[-2].ttype)->getint() + 1);
             }
-#line 2416 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2456 "program6.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 2420 "program6.tab.cpp" /* yacc.c:1646  */
+#line 2460 "program6.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2644,5 +2684,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 562 "program6.ypp" /* yacc.c:1906  */
+#line 602 "program6.ypp" /* yacc.c:1906  */
 

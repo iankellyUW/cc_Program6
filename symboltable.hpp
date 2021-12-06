@@ -1,3 +1,4 @@
+
 /*
  * $Author: Ian Kelly     $
  * $Date: 2021-12-04      $
@@ -35,7 +36,10 @@ struct TypeEntry
 class SymbolTable
 {
 public:
-    SymbolTable(SymbolTable* parentPtr = nullptr);
+    string name = "";
+    string type = "";
+ 
+    SymbolTable(SymbolTable* parentPtr = nullptr, string nm = "", string tp = "");
     ~SymbolTable();
 
     SymbolTable* getParent();
