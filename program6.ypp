@@ -296,7 +296,7 @@ ident: ID               {
 
 number: NUM             {
                         $$=new nodeNum();
-                        $$->setval(scanner.YYText());
+                        $$->setval("int");
                         }
 ;
 
@@ -408,6 +408,8 @@ name: THIS              {
                         }
         | ident         {
                         $$=new nodeName($1,nullptr,1,id,id);
+                        cout << $1->getstring() << endl;
+                        $$->setval($1->getstring());
                         }
         | name DOT ident{
                         $$=new nodeName($1,$3,2,id,id);
@@ -441,10 +443,12 @@ conditionalstatement: IF LPAREN expression RPAREN statement {
 
 expression: name        {
                         $$=new nodeExpNameNumNull($1);
+                        cout << "name: " << $1->getstring() << endl;
                         $$->setval($1->getstring());
                         }
        | number         {        
                         $$=new nodeExpNameNumNull($1,nullptr,1,$1->getstring()); 
+                        $$->setval($1->getstring());
                         }
        | NULLT          {
                         $$=new nodeExpNameNumNull(nullptr,nullptr, 2);
@@ -456,12 +460,14 @@ expression: name        {
                         //cout << "e + e : ";
                         //cout << $1->getint() << " + " << $3->getint() << endl;
                         string tempInt = "int";
-                        TypeEntry *temp = types.findType(tempInt);
-                        $$=new nodeBin($1,$3,0,curTable);
-                        if($1->typeCheck() != 0 && temp != nullptr)
+                        cout << $1->getstring() << ", " << $3->getstring() << endl;
+                        
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
                         {
-                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp + exp" << endl;
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp + exp" << endl;
                         }
+                        $$=new nodeBin($1,$3,0,curTable);
+                        $$->setval("int");
                         }
        |  expression MINUS expression  { 
                         //cout << "e - e : ";
@@ -551,6 +557,13 @@ expression: name        {
                         $$=new nodeBin($1,$3,12);
                         }
        | expression EQUAL expression {
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt && $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp = exp" << endl;
+                        }
+                        $$=new nodeBin($1,$3,0,curTable);
+                        $$->setval("int");
                         $$=new nodeBin($1,$3,13);
                         }
        | newexpression  { 
