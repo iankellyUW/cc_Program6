@@ -457,11 +457,7 @@ expression: name        {
                         $$=new nodeExpArgl($1,$3,0);
                         }
        |  expression PLUS expression   { 
-                        //cout << "e + e : ";
-                        //cout << $1->getint() << " + " << $3->getint() << endl;
                         string tempInt = "int";
-                        cout << $1->getstring() << ", " << $3->getstring() << endl;
-                        
                         if($1->getstring() != tempInt || $3->getstring() != tempInt)
                         {
                         cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp + exp" << endl;
@@ -470,24 +466,40 @@ expression: name        {
                         $$->setval("int");
                         }
        |  expression MINUS expression  { 
-                        //cout << "e - e : ";
-                        //cout << $1->getint() << " - " << $3->getint() << endl; 
-                        $$=new nodeBin($1,$3,1);
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp - exp" << endl;
+                        }
+                        $$=new nodeBin($1,$3,1,curTable);
+                        $$->setval("int");
                         }
        |  expression TIMES expression  { 
-                        //cout << "e * e : ";
-                        //cout << $1->getint() << " * " << $3->getint() << endl; 
-                        $$=new nodeBin($1,$3,2);
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp * exp" << endl;
+                        }
+                        $$=new nodeBin($1,$3,2,curTable);
+                        $$->setval("int");
                         }
        |  expression DIV expression    { 
-                        //cout << "e / e : ";
-                        //cout << $1->getint() << " / " << $3->getint() << endl; 
-                        $$=new nodeBin($1,$3,3);
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp / exp" << endl;
+                        }
+                        $$=new nodeBin($1,$3,3,curTable);
+                        $$->setval("int");
                         }
        |  expression EXP expression    { 
-                        //cout << "e ^ e : " ;
-                        //cout << $1->getint() << " ^ " << $3->getint() << endl; 
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad exp ^ exp" << endl;
+                        }
                         $$=new nodeExpExp($1,$3); 
+                        $$->setval("int");
                         }
        | MINUS expression %prec NEG { 
                         //cout << "- e : " << $2->getint() << endl;       
