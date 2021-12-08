@@ -1,8 +1,6 @@
 class foo {
-
   int a;
   int b;
-
   foo(test param, extra boots)
   {
      int a;
@@ -11,23 +9,18 @@ class foo {
      a = 5 + 4;
      b = x + 3;
   }
-
   void main(int z)
   {
     int x;
   }
-
   int main()
   {
     int q;
   }
-
   void main(int p)
   {
     int j;
   }
-
-
   int boo(int a)
   {
     a.this;
