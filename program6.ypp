@@ -126,6 +126,7 @@ classstart: CLASS ident {
                         SymbolTable* temp = new SymbolTable(curTable);
                         TypeEntry* typeEnt = new TypeEntry("",$2->getstring(),"class_type",temp);
                         curTable->insert($2->getstring(),typeEnt);
+                        curTable->name = $2->getstring();
                         curTable = temp;
                         types.addType(typeEnt->type,typeEnt);
                         $$=new Node($2);
@@ -209,6 +210,7 @@ consstart: ident LPAREN {
                         SymbolTable* temp = new SymbolTable(curTable);
                         TypeEntry* typeEnt = new TypeEntry("", $1->getstring(),"constructor_type",temp);
                         curTable->insert($1->getstring(),typeEnt);
+                        curTable->name = $1->getstring();
                         curTable = temp;
                         }
 ;
@@ -242,7 +244,6 @@ methbody: parameterlist RPAREN block {
                         }
                               $$=new Node($1,$3);
                               curTable = curTable->getParent();
-                        
                         }
 ;
 
@@ -255,6 +256,7 @@ methstart: type ident LPAREN {
                               cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Type already exists in this scope" << endl;
                         }
                         curTable->insert($2->getstring(),typeEnt);
+                        curTable->name = $2->getstring();
                         curTable = temp;
                         }
       | ident ident LPAREN {
@@ -266,6 +268,7 @@ methstart: type ident LPAREN {
                               cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Type already exists in this scope" << endl;
                         }
                         curTable->insert($2->getstring(),typeEnt);
+                        curTable->name = $2->getstring();
                         curTable = temp;
                         }
       | VOID ident LPAREN {
@@ -277,6 +280,7 @@ methstart: type ident LPAREN {
                               cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Type already exists in this scope" << endl;
                         }
                         curTable->insert($2->getstring(),typeEnt);
+                        curTable->name = $2->getstring();
                         curTable = temp;
                         }
 ;
@@ -354,6 +358,7 @@ statement: SEMI         {
                         }
          | PRINT LPAREN arglist RPAREN SEMI {
                         $$=new nodeState(nullptr,$3,5);
+                        $$->setval("void");
                         }
          | conditionalstatement {
                         $$=new nodeState(nullptr,$1,6);
@@ -362,7 +367,17 @@ statement: SEMI         {
                         $$=new nodeState($3,$5,7);
                         }
          | RETURN expression {
+                        //debug later
                         $$=new nodeState(nullptr,$2,8);
+                        cout << "ret: " << $2->getstring() << ", " << curTable->name << endl;
+                        if(curTable->getParent()->lookup(curTable->name) != nullptr)
+                        {
+                              cout << "ret exp: " << endl;
+                              if(curTable->getParent()->lookup(curTable->name)->type != $2->getstring())
+                              {
+                                    cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " return type not matching" << endl;
+                              }
+                        }
                         } 
          | RETURN       {
                         $$=new nodeState(nullptr,nullptr,9);
@@ -399,12 +414,14 @@ blockstacked: blockstart RBRACE  {
                         $$=new Node($1,$2);
                         curTable = curTable->getParent();
                         }
-         | blockstart error RBRACE {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad vardecs or statements in block." << endl; yyerrok;}       
+         | blockstart error RBRACE {cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " Bad vardecs or statements in block." << endl; yyerrok;
+         }       
 ;
 
 //name
 name: THIS              {
                         $$=new nodeName(nullptr,nullptr,0);
+                        //check parent type
                         }
         | ident         {
                         $$=new nodeName($1,nullptr,1,id,id);
@@ -454,9 +471,11 @@ expression: name        {
                         }
        | NULLT          {
                         $$=new nodeExpNameNumNull(nullptr,nullptr, 2);
+                        $$->setval("nullobj");
                         }
        | name LPAREN arglist RPAREN  { 
                         $$=new nodeExpArgl($1,$3,0);
+                        $$->setval($1->getstring());
                         }
        |  expression PLUS expression   { 
                         string tempInt = "int";
@@ -508,26 +527,58 @@ expression: name        {
                         $$=new nodeMinus($2);
                         }
        | READ LPAREN RPAREN {
-                        //cout << "read()" << endl;
                         $$=new nodeRead();
+                        $$->setval("int");
                         } 
 
     //sum operators                    
        |  expression OR  expression    {
-                        //cout << "e || e: ";
-                        //cout << $1->getint() << " || " << $3->getint() << endl;
-                        $$=new nodeBin($1,$3,4);
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-integer type in exp * exp" << endl;
+                        }
+                        $$=new nodeBin($1,$3,4,curTable);
+                        $$->setval("int");
                         }  
     //relation operators
        |  expression EQ  expression     {
                         //cout << "e == e : ";
                         //cout << $1->getint() << " == " << $3->getint() << endl;
+                        string tempInt = "int";
+                        if(($1->getstring() == "nullobj" && $3->getstring() == tempInt) || ($3->getstring() == "nullobj" && $1->getstring() == tempInt))
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " cannot match null to int" << endl;
+                        }
+                        else if($1->getstring() == "nullobj" || $3->getstring() == "nullobj")
+                        {
+                              //correct case
+                        }
+                        else if($1->getstring() != $3->getstring())
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-matching type in exp == exp" << endl;
+                        }
                         $$=new nodeBin($1,$3,5);
+                        $$->setval("int");
                         }
        |  expression NE  expression     {
                         //cout << "e != e: ";
                         //cout << $1->getint() << " != " << $3->getint() << endl;
+                        string tempInt = "int";
+                        if(($1->getstring() == "nullobj" && $3->getstring() == tempInt) || ($3->getstring() == "nullobj" && $1->getstring() == tempInt))
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " cannot match null to int" << endl;
+                        }
+                        else if($1->getstring() == "nullobj" || $3->getstring() == "nullobj")
+                        {
+                              //correct case
+                        }
+                        else if($1->getstring() != $3->getstring())
+                        {
+                              cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-matching type in exp != exp" << endl;
+                        }
                         $$=new nodeBin($1,$3,6);
+                        $$->setval("int");
                         }
        |  expression GE  expression     {
                         string tempInt = "int";
@@ -568,23 +619,44 @@ expression: name        {
     //unary operatorsnodePar($3);
     
        | PLUS expression %prec UPLUS {
-                        //cout << "+e : " << $2->getint() << endl;       
+                        //cout << "+e : " << $2->getint() << endl;   
+                        string tempInt = "int";
+                        if($2->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-integer type in exp + exp" << endl;
+                        }    
                         $$=new nodePlus($2);
+                        $$->setval("int");
                         }
        | NOT expression {
                         //cout << "!e: " << $2->getint() << endl;
+                        string tempInt = "int";
+                        if($2->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-integer type in !exp" << endl;
+                        }
                         $$=new nodeNot($2);
+                        $$->setval("int");
                         }
     //prod operators
-       |  expression MOD  expression    {
+       |  expression MOD expression    {
                         //cout << "e % e: ";
                         //cout << $1->getint() << " % " << $3->getint() << endl;
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-integer type in exp \% exp" << endl;
+                        }
                         $$=new nodeBin($1,$3,11);
                         }
        |  expression AND  expression    {
-                        //cout << "e && e: ";
-                        //cout << $1->getint() << " && " << $3->getint() << endl;
-                        $$=new nodeBin($1,$3,12);
+                        string tempInt = "int";
+                        if($1->getstring() != tempInt || $3->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-integer type in exp * exp" << endl;
+                        }
+                        $$=new nodeBin($1,$3,12,curTable);
+                        $$->setval("int");
                         }
        | expression EQUAL expression {
                         string tempInt = "int";
@@ -598,9 +670,11 @@ expression: name        {
                         }
        | newexpression  { 
                         $$=new Node($1);
+                        $$->setval($1->getstring());
                         }
        | LPAREN expression RPAREN {
                         $$=new nodePar($2);
+                        $$->setval($2->getstring());
                         }
 ;
 
@@ -614,7 +688,7 @@ newexpression: NEW ident LPAREN arglist RPAREN {
        | NEW type brackexps {
                         $$=new nodeNewExp($2,$3);
                         } 
-       | NEW error      {
+       | NEW error      {string tempInt = "int";
                         cout << "Line: " << scanner.lineno() << " Col: " << first_column << " error after NEW" << endl;
                         yyerrok;
                         }
@@ -628,9 +702,19 @@ newexpression: NEW ident LPAREN arglist RPAREN {
 
 brackexps: LBRACK expression RBRACK {
                         $$=new nodeBrackExp($2);
+                        string tempInt = "int";
+                        if($2->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-integer type in exp <= exp" << endl;
+                        }
                         $$->setval(1);
                         }
        | LBRACK expression RBRACK brackexps {
+                        string tempInt = "int";
+                        if($2->getstring() != tempInt)
+                        {
+                        cerr << "Line: " << scanner.lineno() << " Col: " << first_column << " non-integer type in exp <= exp" << endl;
+                        }
                         $$=new nodeBrackExp($2,$4);
                         $$->setval($4->getint() + 1);
                         }

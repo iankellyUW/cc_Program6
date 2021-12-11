@@ -21,10 +21,10 @@ class foo {
   {
     int j;
   }
-  int boo(int a)
+  goo boo(int a)
   {
-    a.this;
+    this.a = 2;
     b=a;
-    return 1;
+    return 2;
   }
 }
