@@ -38,6 +38,7 @@ class SymbolTable
 public:
     string name = "";
     string type = "";
+    int constructorCount = 0;
  
     SymbolTable(SymbolTable* parentPtr = nullptr, string nm = "", string tp = "");
     ~SymbolTable();

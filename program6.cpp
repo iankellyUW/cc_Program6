@@ -39,6 +39,7 @@ int main()
     tree = 0;
     //   any   n e e d e d   i n i t i a l i z a t i o n   c o d e
     yyparse();
+    cout << endl << endl;
     types.dump(0);
     // more   c o d e   i f   n e e d e d
     

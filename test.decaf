@@ -1,6 +1,9 @@
 class foo {
   int a;
   int b;
+  foo x;
+  foo y;
+  int z;
   foo(test param, extra boots)
   {
      int a;
@@ -8,23 +11,38 @@ class foo {
      this.x.y.z = 1;
      a = 5 + 4;
      b = x + 3;
+     x = 4;
   }
-  void main(int z)
+  int main(int z)
   {
-    int x;
+    foo x;
+    test m;
+    extra j;
+    foo(m, j);
+    boo(x);
+    //this.a = new foo(j);
+    this.x = new foo(m, j);
   }
   int main()
   {
     int q;
   }
-  void main(int p)
+  spoon main(int p)
   {
     int j;
   }
-  goo boo(int a)
+  int boo(int a)
   {
+    int [][] j;
+    j = new int [7][];
     this.a = 2;
     b=a;
     return 2;
+  }
+}
+class choo {
+  int main()
+  {
+    return x;
   }
 }
